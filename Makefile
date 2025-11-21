@@ -3,7 +3,7 @@ CPP = c++
 INC_FOLDER = includes
 CPPFLAGS =  -I. -I$(INC_FOLDER)
 SRC = srcs/
-SRCS = $(SRC)main.cpp
+SRCS = $(SRC)main.cpp $(SRC)client.cpp
 RM = rm -f
 OFILES = $(SRCS:.cpp=.o)
 

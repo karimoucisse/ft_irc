@@ -1,37 +1,66 @@
 #include "Main.hpp"
 
-void handleClient(int clientFd)
+void connectClient(Client &client)
 {
     char buffer[1024];
     std::string pass = "";
     std::string nick = "";
     std::string user = "";
-    while (true)
+    std::string c1;
+    std::string c2;
+    while (!client.isAuth())
     {
-        int bytesRead = read(clientFd, buffer, sizeof(buffer));
+        int bytesRead = read(client.getFd(), buffer, sizeof(buffer) - 1);
         if (bytesRead <= 0)
-        {
             break;
-        }
-        char cmd1[256];
-        char cmd2[256];
-        if (sscanf(buffer, "%s %s", cmd1, cmd2) != 2)
-            continue;
-        std::string c1(cmd1);
-        std::string c2(cmd2);
 
-        if ((c1 == "pass" || c1 == "PASS") && pass.empty())
-            pass = c2;
-        if ((c1 == "nick" || c1 == "NICK") && nick.empty())
-            nick = c2;
-        if ((c1 == "user" || c1 == "USER") && user.empty())
-            user = c2;
-        if (!user.empty() && !pass.empty() && !nick.empty())
+        buffer[bytesRead] = '\0';
+
+        std::string line(buffer);
+        std::stringstream ss(line);
+
+        std::string cmd, arg;
+        ss >> cmd >> arg;
+        if (cmd.empty() || arg.empty())
+            continue;
+        std::string CMD;
+        for (char c : cmd)
+            CMD += std::toupper(c);
+
+        if (CMD == "PASS" && client.getPass().empty())
+        {
+            client.setPass(arg);
+            std::cout << "PASS = " << client.getPass() << std::endl;
+        }
+        else if (CMD == "NICK" && client.getNick().empty())
+        {
+            client.setNick(arg);
+            std::cout << "NICK = " << client.getNick() << std::endl;
+        }
+        else if (CMD == "USER" && client.getUser().empty())
+        {
+            client.setUser(arg);
+            std::cout << "USER = " << client.getUser() << std::endl;
+        }
+        if(!client.getPass().empty() && !client.getNick().empty() && !client.getUser().empty())
             break;
+        // std::cout << "pass: " << client.getPass()
+        //           << " nick: " << client.getNick()
+        //           << " user: " << client.getUser()
+        //           << " fd: " << client.getFd()
+        //           << std::endl;
+        memset(buffer, 0, sizeof(buffer));
+    }
+    std::cout << "Connected !!!" << (client.isAuth() ? " Yes" : " No") << std::endl;
+    while (client.isAuth())
+    {
+        int bytesRead = read(client.getFd(), buffer, sizeof(buffer));
+        if (bytesRead <= 0)
+            break;
+        write(client.getFd(), buffer, bytesRead);
     }
 
     std::cout << nick << " is connected !" << std::endl;
-    close(clientFd);
 }
 
 int main(int ac, char **av)
@@ -105,15 +134,14 @@ int main(int ac, char **av)
                     close(clientFd);
                     continue;
                 }
-
-                std::thread clientThread(handleClient, clientFd);
-                clientThread.detach();
+                Client client(clientFd);
+                connectClient(client);
             }
             else
             {
                 int clientFd = events[i].data.fd;
-                std::thread clientThread(handleClient, clientFd);
-                clientThread.detach();
+                // std::thread clientThread(handleClient, clientFd);
+                // clientThread.detach();
             }
         }
     }

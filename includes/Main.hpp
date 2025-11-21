@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <thread>
 #include <vector>
+#include <sstream>
 
 #include "Client.hpp"
 #include "Channel.hpp"
