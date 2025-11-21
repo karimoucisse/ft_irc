@@ -1,4 +1,4 @@
-#include <irc.hpp>
+#include "Main.hpp"
 
 void invite(int fd, std::string nickName)
 {

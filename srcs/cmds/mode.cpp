@@ -1,4 +1,4 @@
-#include <irc.hpp>
+#include "Main.hpp"
 
 void mode(int fd, std::string mode)
 {

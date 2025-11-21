@@ -13,8 +13,23 @@
 #pragma once
 #include "Main.hpp"
 
-class Client {
+class Client
+{
 public:
-	Client();
+	Client(void);
+	Client(std::string name, Client &client);
+	Client(std::string name);
+	Client &operator=(const std::string &name);
+	void setUser(std::string user);
+	void setNick(std::string user);
+	void setPass(std::string user);
+	std::string getUser(void) const;
+	std::string getNick(void) const;
+	std::string getPass(void) const;
+	bool isAuth();
 	~Client();
+
+private:
+	std::string _user;
+	std::string _nick;
 };

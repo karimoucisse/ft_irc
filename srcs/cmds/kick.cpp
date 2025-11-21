@@ -1,4 +1,4 @@
-#include <irc.hpp>
+#include "Main.hpp"
 
 void kick(int adminFd, int clientFd, std::string reason)
 {

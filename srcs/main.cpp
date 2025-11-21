@@ -28,7 +28,6 @@ void handleClient(int clientFd)
             user = c2;
         if (!user.empty() && !pass.empty() && !nick.empty())
             break;
-        // write(clientFd, buffer, bytesRead);
     }
 
     std::cout << nick << " is connected !" << std::endl;

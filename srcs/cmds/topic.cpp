@@ -1,4 +1,4 @@
-#include <irc.hpp>
+#include "Main.hpp"
 
 void topic(int fd, std::string reason)
 {

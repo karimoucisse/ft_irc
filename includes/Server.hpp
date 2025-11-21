@@ -14,3 +14,15 @@
 
 #include "Main.hpp"
 
+class Server
+{
+public:
+	Server(void);
+	Server(std::string name, Client &client);
+	Server(std::string name);
+	Server &operator=(const std::string &name);
+	~Server();
+private:
+	std::vector<Channel> _channels;
+	std::vector<Client> _clients;
+};
