@@ -3,11 +3,12 @@
 Client::Client(void) : _pass(""), _nick(""), _user(""), _fd(-1) {}
 Client::Client(int fd) : _pass(""), _nick(""), _user(""), _fd(fd) {}
 Client::Client(std::string p, std::string n, std::string u) : _pass(""), _nick(n), _user(u), _fd(-1) {}
-Client::Client(Client &client)
+Client::Client(const Client &client)
 {
 	*this = client;
 }
-Client &Client::operator=(Client &client)
+
+Client &Client::operator=(const Client &client)
 {
 	if (this != &client)
 	{
@@ -56,9 +57,9 @@ bool Client::isAuth()
 }
 Client::~Client()
 {
-	if(_fd != -1)
-	{
-		close(_fd);
-		std::cout << _nick  << " has been deleted !" << std::endl;
-	}
+	// if(_fd != -1)
+	// {
+	// 	close(_fd);
+	// 	std::cout << _nick  << " has been deleted !" << std::endl;
+	// }
 }

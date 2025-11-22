@@ -14,15 +14,22 @@
 
 #include "Main.hpp"
 
+class Client;
 class Server
 {
 public:
 	Server(void);
-	Server(std::string name, Client &client);
-	Server(std::string name);
-	Server &operator=(const std::string &name);
+	Channel *getOneChannel(std::string name);
+	const std::vector<Channel> &getChannels() const;
+	void addChannel(Channel &channel);
+	void deleteChannel(std::string name);
+	Client *getOneClient(int fd);
+	const std::vector<Client> &getClients() const;
+	void addClient(Client &client);
+	void deleteClient(int fd);
 	~Server();
 private:
 	std::vector<Channel> _channels;
 	std::vector<Client> _clients;
+	std::vector<Client> _ncClients;
 };

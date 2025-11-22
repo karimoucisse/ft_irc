@@ -23,7 +23,7 @@ private:
 	std::string _name;
 	std::string _password;
 	std::string _topic;
-	int _operator;
+	// int _operator;
 	int _size;
 	bool _inviteOnly;
 	bool _restrictedTopic;
@@ -39,7 +39,7 @@ public:
 	void setName(std::string name);
 	void setPassword(std::string password);
 	void setTopic(std::string topic);
-	void setOperator(int op);
+	// void setOperator(int op);
 	void setSize(int size);
 	void setInviteOnly(bool inv_only);
 	void SetRestrictedTopic(bool rest_topic);
@@ -64,7 +64,8 @@ public:
 	void removeClient(int fd);
 	void removeOperator(int fd);
 	void removeInvitedClient(int fd);
-	void broadcastToAll(int fd);
+	void broadcastToOne(int fd, std::string msg);
+	void broadcastToAll(std::string msg);
 	void broadcastToAll(int fd, std::string msg);
 };
 

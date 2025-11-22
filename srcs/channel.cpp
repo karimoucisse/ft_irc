@@ -1,56 +1,43 @@
 #include "Main.hpp"
 
 Channel::Channel(void)
-: _name("NULL")
-, _password("")
-, _topic("topic for :" + _name)
-, _operator(-1), _size(-1)
-, _inviteOnly(false)
-, _restrictedTopic(false)
-{return;}
-
+	: _name("NULL"), _password(""), _topic("topic for :" + _name), _size(-1), _inviteOnly(false), _restrictedTopic(false)
+{
+	return;
+}
 
 Channel::Channel(std::string name, Client &client)
-: _name("NULL")
-, _password("")
-, _topic("topic for :" + _name)
-, _operator(-1), _size(-1)
-, _inviteOnly(false)
-, _restrictedTopic(false)
+	: _name("NULL"), _password(""), _topic("topic for :" + _name), _size(-1), _inviteOnly(false), _restrictedTopic(false)
 {
 	_operators.push_back(client);
 }
 Channel::Channel(std::string name)
-: _name(name)
-, _password("")
-, _topic("topic for :" + name)
-, _operator(-1), _size(-1)
-, _inviteOnly(false)
-, _restrictedTopic(false)
-{return;}
+	: _name(name), _password(""), _topic("topic for :" + name), _size(-1), _inviteOnly(false), _restrictedTopic(false)
+{
+	return;
+}
 Channel::~Channel() {}
 
-void Channel::setName(std::string name){_name = name;}
-void Channel::setPassword(std::string password){_password = password;}
-void Channel::setTopic(std::string topic){_topic = topic;}
-void Channel::setSize(int size){_size = size;}
-void Channel::setInviteOnly(bool invOnly){_inviteOnly = invOnly;}
-void Channel::SetRestrictedTopic(bool restTopic){_restrictedTopic = restTopic;}
+void Channel::setName(std::string name) { _name = name; }
+void Channel::setPassword(std::string password) { _password = password; }
+void Channel::setTopic(std::string topic) { _topic = topic; }
+void Channel::setSize(int size) { _size = size; }
+void Channel::setInviteOnly(bool invOnly) { _inviteOnly = invOnly; }
+void Channel::SetRestrictedTopic(bool restTopic) { _restrictedTopic = restTopic; }
 
-
-std::string Channel::getName(void) const{return _name;}
-std::string Channel::getPassword(void) const{return _password;}
-std::string Channel::getTopic(void) const{return _topic;}
-int Channel::getSize(void) const{return _size;}
-bool Channel::getInviteOnly(void) const {return _inviteOnly;}
-bool Channel::getRestrictedTopic(void) const {return _restrictedTopic;}
+std::string Channel::getName(void) const { return _name; }
+std::string Channel::getPassword(void) const { return _password; }
+std::string Channel::getTopic(void) const { return _topic; }
+int Channel::getSize(void) const { return _size; }
+bool Channel::getInviteOnly(void) const { return _inviteOnly; }
+bool Channel::getRestrictedTopic(void) const { return _restrictedTopic; }
 Client *Channel::getClient(int fd)
 {
 	std::vector<Client>::iterator it = _clients.begin();
 	std::vector<Client>::iterator ite = _clients.end();
-	while(it != ite)
+	while (it != ite)
 	{
-		// find client by fd
+		return &(*it);
 	}
 	return NULL;
 }
@@ -58,9 +45,9 @@ Client *Channel::getOperator(int fd)
 {
 	std::vector<Client>::iterator it = _operators.begin();
 	std::vector<Client>::iterator ite = _operators.end();
-	while(it != ite)
+	while (it != ite)
 	{
-		// find operator by fd
+		return &(*it);
 	}
 	return NULL;
 }
@@ -68,62 +55,80 @@ Client *Channel::getInvitedClient(int fd)
 {
 	std::vector<Client>::iterator it = _operators.begin();
 	std::vector<Client>::iterator ite = _operators.end();
-	while(it != ite)
+	while (it != ite)
 	{
-		// find invitation by fd
+		return &(*it);
 	}
 	return NULL;
 }
 
 void Channel::addClient(Client &newClient)
 {
-	// verify if client exist, if not, then add;
+	if (!getClient(newClient.getFd()))
+		_clients.push_back(newClient);
 }
 void Channel::addOperator(Client &newOperator)
 {
-	// verify if operator exist, if not, then add;
+	if (!getOperator(newOperator.getFd()) && getClient(newOperator.getFd()))
+		_operators.push_back(newOperator);
 }
-void Channel::addInvitation(Client &newOperator)
+void Channel::addInvitation(Client &newinvited)
 {
-	// verify if operator exist, if not, then add;
+	if (!getClient(newinvited.getFd()) && !getInvitedClient(newinvited.getFd()))
+		_inviteds.push_back(newinvited);
 }
 
 void Channel::removeClient(int fd)
 {
-	// if client exist then remove
+	std::vector<Client>::iterator it = _clients.begin();
+	for(; it != _clients.end(); it++)
+	{
+		if(it->getFd() == fd)
+			_clients.erase(it);
+	}
+	removeOperator(fd);
 }
 void Channel::removeOperator(int fd)
 {
-	// if admin exist then remove
+	std::vector<Client>::iterator it = _operators.begin();
+	for(; it != _operators.end(); it++)
+	{
+		if(it->getFd() == fd)
+			_operators.erase(it);
+	}
 }
 
 void Channel::removeInvitedClient(int fd)
 {
-	// if admin exist then remove
+	std::vector<Client>::iterator it = _clients.begin();
+	for(; it != _clients.end(); it++)
+	{
+		if(it->getFd() == fd)
+			_clients.erase(it);
+	}
 }
 
-void Channel::broadcastToAll(int clientFd)
+void Channel::broadcastToOne(int fd, std::string msg)
 {
-	char buffer[1024];
-	while(true)
-	{
-		int bytesRead = read(clientFd, buffer, sizeof(buffer));
-		if(bytesRead <= 0)
-			break;
-		// for everry clientfd, exept current client, brodcast the message
-		// write(otherClientfd, buffer, bytesRead);
-	}
+	Client *client = getClient(fd);
+	if (client)
+		write(client->getFd(), msg.c_str(), msg.length());
+}
+
+void Channel::broadcastToAll(std::string msg)
+{
+	broadcastToAll(-1, msg);
 }
 
 void Channel::broadcastToAll(int clientFd, std::string msg)
 {
-	char buffer[1024];
-	while(true)
+	std::vector<Client>::iterator it = _clients.begin();
+	std::vector<Client>::iterator ite = _clients.end();
+
+	while (it != ite)
 	{
-		int bytesRead = read(clientFd, buffer, sizeof(buffer));
-		if(bytesRead <= 0)
-			break;
-		// for everry clientfd, exept current client, brodcast the message
-		// write(otherClientfd, buffer, bytesRead);
+		if (it->getFd() == clientFd)
+			continue;
+		write(it->getFd(), msg.c_str(), msg.length());
 	}
 }

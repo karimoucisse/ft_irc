@@ -19,8 +19,8 @@ public:
 	Client(void);
 	Client(int fd);
 	Client(std::string p, std::string n, std::string u);
-	Client(Client &client);
-	Client &operator=(Client &client);
+	Client(Client const &client);
+	Client &operator=(Client const &client);
 	void setUser(std::string user);
 	void setFd(int fd);
 	void setNick(std::string nick);
