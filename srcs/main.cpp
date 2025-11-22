@@ -40,7 +40,9 @@ void parseCmd(Client *c, std::string line, Server &server)
         x = toupper(x);
 
     if (cmd == "/JOIN")
+    {
         std::cout << line << std::endl;
+    }
     if (cmd == "/INVITE")
         std::cout << line << std::endl;
     if (cmd == "/KICK")
