@@ -28,6 +28,8 @@ public:
 	void addClient(Client &client);
 	void deleteClient(int fd);
 	~Server();
+	void join(std::string cmd, int fd);
+
 private:
 	std::vector<Channel> _channels;
 	std::vector<Client> _clients;
