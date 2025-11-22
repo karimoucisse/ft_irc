@@ -1,6 +1,6 @@
 #include "Main.hpp"
 
-void parseCommand(Client *c, std::string line, Server &server)
+void parseAuthCmd(Client *c, std::string line, Server &server)
 {
     std::cout << line << std::endl;
     std::stringstream ss(line);
@@ -29,6 +29,49 @@ void parseCommand(Client *c, std::string line, Server &server)
         std::cout << "Welcome !!" << std::endl;
 }
 
+void parseCmd(Client *c, std::string line, Server &server)
+{
+    std::cout << line << std::endl;
+    std::stringstream ss(line);
+    std::string cmd, arg;
+    ss >> cmd >> arg;
+
+    for (char &x : cmd)
+        x = toupper(x);
+
+    if (cmd == "/JOIN")
+        std::cout << line << std::endl;
+    if (cmd == "/INVITE")
+        std::cout << line << std::endl;
+    if (cmd == "/KICK")
+        std::cout << line << std::endl;
+    if (cmd == "/MODE")
+        std::cout << line << std::endl;
+    if (cmd == "/QUIT")
+        std::cout << line << std::endl;
+    if (cmd == "/TOPIC")
+        std::cout << line << std::endl;
+}
+
+void handleCmd(int clientFd, Server &server)
+{
+    Client *c = server.getOneClient(clientFd);
+    if (!c->isAuth())
+        return;
+    char buffer[1024];
+    int bytes = read(clientFd, buffer, sizeof(buffer));
+
+    if (bytes <= 0)
+    {
+        server.deleteClient(clientFd);
+        close(clientFd);
+        return;
+    }
+
+    parseCmd(c, buffer, server);
+    memset(buffer, 0, sizeof(buffer));
+}
+
 void connectClient(int clientFd, Server &server)
 {
 
@@ -44,7 +87,7 @@ void connectClient(int clientFd, Server &server)
         close(clientFd);
         return;
     }
-    parseCommand(c, buffer, server);
+    parseAuthCmd(c, buffer, server);
     memset(buffer, 0, sizeof(buffer));
 }
 
@@ -128,6 +171,7 @@ int main(int ac, char **av)
             {
                 int clientFd = events[i].data.fd;
                 connectClient(clientFd, server);
+                handleCmd(clientFd, server);
             }
         }
     }

@@ -1,6 +1,6 @@
 #include "Main.hpp"
 
-void join(int fd, std::string channel ,std::string password)
+void join(int fd, Channel *channel ,std::string password)
 {
 	// if channel is invite only, verify if user has been invited.
 	// 	if user have been invited, then add user, and delete user
