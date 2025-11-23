@@ -35,6 +35,19 @@ void Server::deleteChannel(std::string name)
 		it++;
 	}
 }
+
+Client *Server::getOneClient(std::string nick)
+{
+	std::vector<Client>::iterator it = _clients.begin();
+	std::vector<Client>::iterator ite = _clients.end();
+	while(it != ite)
+	{
+		if(it->getNick() == nick)
+			return &(*it);
+		it++;
+	}
+	return NULL;
+}
 Client *Server::getOneClient(int  fd)
 {
 	std::vector<Client>::iterator it = _clients.begin();

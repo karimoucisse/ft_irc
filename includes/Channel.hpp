@@ -52,6 +52,7 @@ public:
 	bool getInviteOnly(void) const;
 	bool getRestrictedTopic(void) const;
 	Client *getClient(int fd);
+	Client *getClient(std::string nick);
 	Client *getOperator(int fd);
 	Client *getInvitedClient(int fd);
 

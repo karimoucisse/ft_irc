@@ -31,7 +31,6 @@ void parseAuthCmd(Client *c, std::string line, Server &server)
 
 void parseCmd(Client *c, std::string line, Server &server)
 {
-    std::cout << line << std::endl;
     std::stringstream ss(line);
     std::string cmd, arg;
     ss >> cmd >> arg;
@@ -40,19 +39,17 @@ void parseCmd(Client *c, std::string line, Server &server)
         x = toupper(x);
 
     if (cmd == "/JOIN")
-    {
-        std::cout << line << std::endl;
-    }
+        server.join(line ,c->getFd());
     if (cmd == "/INVITE")
         std::cout << line << std::endl;
     if (cmd == "/KICK")
-        std::cout << line << std::endl;
+        server.kick(line ,c->getFd());
     if (cmd == "/MODE")
         std::cout << line << std::endl;
     if (cmd == "/QUIT")
         std::cout << line << std::endl;
     if (cmd == "/TOPIC")
-        std::cout << line << std::endl;
+        server.topic(line, c->getFd());
 }
 
 void handleCmd(int clientFd, Server &server)

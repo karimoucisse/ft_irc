@@ -1,18 +1,18 @@
 #include "Main.hpp"
 
 Channel::Channel(void)
-	: _name("NULL"), _password(""), _topic("topic for :" + _name), _size(-1), _inviteOnly(false), _restrictedTopic(false)
+	: _name(""), _password(""), _topic(""), _size(-1), _inviteOnly(false), _restrictedTopic(false)
 {
 	return;
 }
 
 Channel::Channel(std::string name, Client &client)
-	: _name("NULL"), _password(""), _topic("topic for :" + _name), _size(-1), _inviteOnly(false), _restrictedTopic(false)
+	: _name(name), _password(""), _topic(""), _size(-1), _inviteOnly(false), _restrictedTopic(false)
 {
 	_operators.push_back(client);
 }
 Channel::Channel(std::string name)
-	: _name(name), _password(""), _topic("topic for :" + name), _size(-1), _inviteOnly(false), _restrictedTopic(false)
+	: _name(name), _password(""), _topic(""), _size(-1), _inviteOnly(false), _restrictedTopic(false)
 {
 	return;
 }
@@ -31,13 +31,27 @@ std::string Channel::getTopic(void) const { return _topic; }
 int Channel::getSize(void) const { return _size; }
 bool Channel::getInviteOnly(void) const { return _inviteOnly; }
 bool Channel::getRestrictedTopic(void) const { return _restrictedTopic; }
+Client *Channel::getClient(std::string nick)
+{
+	std::vector<Client>::iterator it = _clients.begin();
+	std::vector<Client>::iterator ite = _clients.end();
+	while (it != ite)
+	{
+		if(it->getNick() == nick)
+			return &(*it);
+		it++;
+	}
+	return NULL;
+}
 Client *Channel::getClient(int fd)
 {
 	std::vector<Client>::iterator it = _clients.begin();
 	std::vector<Client>::iterator ite = _clients.end();
 	while (it != ite)
 	{
-		return &(*it);
+		if(it->getFd() == fd)
+			return &(*it);
+		it++;
 	}
 	return NULL;
 }
@@ -47,7 +61,9 @@ Client *Channel::getOperator(int fd)
 	std::vector<Client>::iterator ite = _operators.end();
 	while (it != ite)
 	{
-		return &(*it);
+		if(it->getFd() == fd)
+			return &(*it);
+		it++;
 	}
 	return NULL;
 }
@@ -57,7 +73,9 @@ Client *Channel::getInvitedClient(int fd)
 	std::vector<Client>::iterator ite = _operators.end();
 	while (it != ite)
 	{
-		return &(*it);
+		if(it->getFd() == fd)
+			return &(*it);
+		it++;
 	}
 	return NULL;
 }
@@ -130,5 +148,6 @@ void Channel::broadcastToAll(int clientFd, std::string msg)
 		if (it->getFd() == clientFd)
 			continue;
 		write(it->getFd(), msg.c_str(), msg.length());
+		it++;
 	}
 }

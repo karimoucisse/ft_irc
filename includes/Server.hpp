@@ -24,11 +24,14 @@ public:
 	void addChannel(Channel &channel);
 	void deleteChannel(std::string name);
 	Client *getOneClient(int fd);
+	Client *getOneClient(std::string nick);
 	const std::vector<Client> &getClients() const;
 	void addClient(Client &client);
 	void deleteClient(int fd);
 	~Server();
 	void join(std::string cmd, int fd);
+	void topic(std::string cmd, int fd);
+	void kick(std::string cmd, int fd);
 
 private:
 	std::vector<Channel> _channels;
