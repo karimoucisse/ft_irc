@@ -1,5 +1,5 @@
 
-#include "Main.hpp"
+#include "Irc.hpp"
 Client::Client(void) : _pass(""), _nick(""), _user(""), _fd(-1) {}
 Client::Client(int fd) : _pass(""), _nick(""), _user(""), _fd(fd) {}
 Client::Client(std::string p, std::string n, std::string u) : _pass(""), _nick(n), _user(u), _fd(-1) {}
@@ -35,6 +35,17 @@ void Client::setPass(std::string pass)
 {
 	_pass = pass;
 }
+
+void Client::setBuffer(std::string str)
+{
+	_buffer += str;
+}
+
+void Client::clearBuffer(void)
+{
+	_buffer.clear();
+}
+
 std::string Client::getUser(void) const
 {
 	return _user;
@@ -51,10 +62,21 @@ int Client::getFd(void) const
 {
 	return _fd;
 }
+
+std::string Client::getBuffer(void) const
+{
+	return _buffer;
+}
 bool Client::isAuth()
 {
 	return (_fd != -1 && !_pass.empty() && !_nick.empty() && !_user.empty());
 }
+
+void Client::send(std::string msg)
+{
+	write(getFd(), msg.c_str(), strlen(msg.c_str()));
+}
+
 Client::~Client()
 {
 	// if(_fd != -1)

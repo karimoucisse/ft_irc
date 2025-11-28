@@ -4,8 +4,8 @@ INC_FOLDER = includes
 CPPFLAGS =  -I. -I$(INC_FOLDER)
 SRC = srcs/
 CMD_FOLDER = $(SRC)cmds/
-CMD_FILES = $(CMD_FOLDER)join.cpp $(CMD_FOLDER)topic.cpp $(CMD_FOLDER)kick.cpp
-SRCS = $(SRC)main.cpp $(SRC)server.cpp $(SRC)client.cpp $(SRC)channel.cpp $(CMD_FILES)
+CMD_FILES = $(CMD_FOLDER)join.cpp $(CMD_FOLDER)topic.cpp $(CMD_FOLDER)kick.cpp $(CMD_FOLDER)pass.cpp
+SRCS = $(SRC)main.cpp $(SRC)server.cpp $(SRC)client.cpp $(SRC)channel.cpp $(SRC)utils.cpp $(CMD_FILES)
 RM = rm -f
 OFILES = $(SRCS:.cpp=.o)
 

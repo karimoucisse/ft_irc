@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #pragma once
-#include "Main.hpp"
+#include "Irc.hpp"
 
 class Channel
 {

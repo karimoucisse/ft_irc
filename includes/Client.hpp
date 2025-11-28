@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #pragma once
-#include "Main.hpp"
+#include "Irc.hpp"
 
 class Client
 {
@@ -25,16 +25,21 @@ public:
 	void setFd(int fd);
 	void setNick(std::string nick);
 	void setPass(std::string pass);
+	void setBuffer(std::string buf);
+	void clearBuffer(void);
 	std::string getUser(void) const;
 	std::string getNick(void) const;
 	std::string getPass(void) const;
 	int getFd(void) const;
+	std::string getBuffer(void) const;
 	bool isAuth();
+	void send(std::string msg);
 	~Client();
 
 private:
 	std::string _user;
 	std::string _nick;
 	std::string _pass;
+	std::string _buffer;
 	int _fd;
 };

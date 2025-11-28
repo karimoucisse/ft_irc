@@ -12,13 +12,16 @@
 
 #pragma once
 
-#include "Main.hpp"
+#include "Irc.hpp"
 
 class Client;
 class Server
 {
 public:
-	Server(void);
+	Server(int port, std::string password);
+	void initServer(void);
+	static void setSignal(bool b);
+	~Server();
 	Channel *getOneChannel(std::string name);
 	const std::vector<Channel> &getChannels() const;
 	void addChannel(Channel &channel);
@@ -28,13 +31,23 @@ public:
 	const std::vector<Client> &getClients() const;
 	void addClient(Client &client);
 	void deleteClient(int fd);
-	~Server();
-	void join(std::string cmd, int fd);
-	void topic(std::string cmd, int fd);
-	void kick(std::string cmd, int fd);
+
+	void cmd_pass(std::vector<std::string> cmd, Client *client);
 
 private:
+	int _port;
+	int _serverFd;
+	int _epollFd;
+	std::string _password;
+	static bool _signal;
+	struct sockaddr_in _serverAddress;
+	struct sockaddr_in _clientAddress;
+	struct epoll_event _event;
+	struct epoll_event _events[MAX_EVENTS];
+	void _setSocket(void);
+	void _handleNewClient(void);
+	void _handleClientData(int fd);
+	void _handleCmd(std::string str, Client *client);
 	std::vector<Channel> _channels;
 	std::vector<Client> _clients;
-	std::vector<Client> _ncClients;
 };

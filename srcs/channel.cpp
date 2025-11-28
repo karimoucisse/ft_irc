@@ -1,4 +1,4 @@
-#include "Main.hpp"
+#include "Irc.hpp"
 
 Channel::Channel(void)
 	: _name(""), _password(""), _topic(""), _size(-1), _inviteOnly(false), _restrictedTopic(false)
